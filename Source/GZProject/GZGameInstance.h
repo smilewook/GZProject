@@ -2,9 +2,12 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "GZProject.h"
 #include "Engine/GameInstance.h"
 #include "GZGameInstance.generated.h"
+
+// 
+extern UGZGameInstance* GInstance;
 
 /**
  * 
@@ -14,4 +17,8 @@ class GZPROJECT_API UGZGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
 	
+public:
+	UGZGameInstance();
+	virtual ~UGZGameInstance();
+
 };
