@@ -22,4 +22,12 @@ public:
 	virtual void StartPlay() override;
 	//~ End AGameModeBase
 
+protected:
+	//~ Begin AActor
+	virtual void BeginPlay() override;
+	//~ End AActor
+
+	/** UI √ ±‚»≠ */
+	virtual void InitializeUI();
+
 };

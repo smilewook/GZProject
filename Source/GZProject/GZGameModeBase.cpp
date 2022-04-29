@@ -18,7 +18,23 @@ void AGZGameModeBase::StartPlay()
 {
 	Super::StartPlay();
 
-	GZ_LOG_S(GZ, Warning);
+	//GZ_LOG_S(GZ, Warning);
 
 	//UGZUIManager
+}
+
+void AGZGameModeBase::BeginPlay()
+{
+	Super::BeginPlay();
+
+	// UI √ ±‚»≠
+	InitializeUI();
+}
+
+void AGZGameModeBase::InitializeUI()
+{
+	EGZUIMode UIMode;
+	UIMode = EGZUIMode::Lobby;
+
+	UGZUIManager::GetUIManager().Initialize(UIMode);
 }

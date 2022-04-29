@@ -4,12 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
+
+#include "UI/Define/GZDefine.h"
+
 #include "GZUIManager.generated.h"
 
 /**
  * 
  */
-UCLASS()
+UCLASS(config=UI)
 class GZPROJECT_API UGZUIManager : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
@@ -18,7 +21,7 @@ public:
 	UGZUIManager();
 
 	/**
-	 * UIManager 레퍼런스를 전달
+	 * GZGameInstance에 존재하는 UIManager 레퍼런스를 전달
 	 */
 	static UGZUIManager& GetUIManager();
 
@@ -27,12 +30,49 @@ public:
 	virtual void Deinitialize() override;
 	//~ End USubsystem Interface
 
-	void Initialize(EGZUIMode UIMode);
+	/**
+	 * Main Screen을 초기화
+	 * @param MainScreenUIMode 메인스크린에 표시할 UIMode
+	 */
+	void Initialize(EGZUIMode EUIMode);
+
+	/**
+	* Main Screen의 UIState를 변경함
+	* @param MainUIState 변경하고자 하는 메인스크린 UIState
+	*/
+	void ChangeUIState(EGZUIMode MainUIState);
+
+	/**
+	* UI STATE를 리턴함
+	* @param TargetScreen 스크린 인덱스 (0 = 메인)
+	* @return EGZUIState 현재 UIState
+	*/
+	EGZUIState GetUIState(EGZUIScreen TargetScreen) const;
+
+	/**
+	* UI STATE 이름을 리턴함
+	* @param UIState
+	* @return FString 현재 UIState 이름
+	*/
+	FString GetUIStateNameByEnum(EGZUIState UIState);
+
+	/**
+	* UI Screen 리턴함
+	* @param UIScreen
+	*/
+	class UGZUIScreenBase* GetUIScreenWidget(EGZUIScreen UIScreen);
 
 	// UI 데이터 받아서 목록 생성
 	//
 
+protected:
+	UPROPERTY()
+	TSubclassOf<class UGZUIScreenBase> MainScreenClass;
 private:
-	/* GameInstance */
+	/** GameInstance */
 	static class UGZGameInstance* GameInstance;
+
+	/** 메인 스크린 */
+ 	UPROPERTY(Transient)
+ 	class UGZUIScreenBase* MainScreen;
 };

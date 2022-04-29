@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
-#include "../Define/GZDefine.h"
+#include "UI/Define/GZDefine.h"
 #include "GZUILoadData.generated.h"
 
 /**
