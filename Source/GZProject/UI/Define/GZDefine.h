@@ -30,6 +30,8 @@ enum class EGZUIMode : uint8
 	Lobby,
 
 	/*Ingame*/
+	Ingame,
+
 	DrivingRange,					//	드라이빙레인지
 	DrivingRangeLongGame,			//	드라이빙레인지 - 롱게임
 	DrivingRangeShortGame,			//	드라이빙레인지 - 온그린(숏게임)
@@ -56,15 +58,14 @@ enum class EGZUIState : uint8
 	None,
 
 	//-----------------------------------------------------------------------------------------------
-	// LOADING
+	// LOBBY
 	Loading,						// 로딩
 	Intro,							// 인트로
 	Patch,							// 패치 및 로딩
-	AdminSetting,					// 관리자 메뉴
-
-	//-----------------------------------------------------------------------------------------------
-	// LOBBY
 	Login,							// 로그인
+	Attention,						// 주의 사항
+	AdminSetting,					// 관리자 메뉴		
+
 	PlayerSetting,					// 플레이어 설정
 	PlayerRegistration,				// 플레이어 등록
 	TimeSetting,					// 시간 설정
@@ -80,7 +81,7 @@ enum class EGZUIState : uint8
 
 	//-----------------------------------------------------------------------------------------------
 	// INGAME
-	Ingame,							// 인게임(드라이빙 레인지, 네트워크 챌린지, 연습라운드)
+	InGame,							// 인게임(드라이빙 레인지, 네트워크 챌린지, 연습라운드)	
 	
 	CoursePreview,					// 코스 미리보기
 	AnalysisHole,					// 홀 분석
@@ -95,6 +96,8 @@ enum class EGZUIState : uint8
 	ShotEnd,						// 샷 종료
 	HoleEnd,						// 홀 종료
 	GameEnd,						// 라운드 종료
+
+	Menu,							// 메뉴
 
 	ExitProgram,					// 프로그램 종료
 

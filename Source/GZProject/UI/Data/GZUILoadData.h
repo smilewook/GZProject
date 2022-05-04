@@ -17,15 +17,25 @@ struct FUILoadData : public FTableRowBase
 	GENERATED_USTRUCT_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UIData")
 	EGZUIMode ModeName;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UIData")
 	EGZUIState StateName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UIData")
+	TArray<TSubclassOf<class UGZUIComponent>> ComponentClassArray;
 
 public:
 	FUILoadData() : ModeName(EGZUIMode::None), StateName(EGZUIState::None)
 	{}
+
+	void Reset()
+	{
+		ModeName = EGZUIMode::None;
+		StateName = EGZUIState::None;
+		ComponentClassArray.Reset();
+	}
 };
 
 UCLASS()

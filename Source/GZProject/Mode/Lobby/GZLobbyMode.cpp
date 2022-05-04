@@ -1,25 +1,29 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "GZGameModeBase.h"
+#include "GZLobbyMode.h"
 #include "UI/System/GZUIManager.h"
 
 
-AGZGameModeBase::AGZGameModeBase()
+AGZLobbyMode::AGZLobbyMode()
 {
 	PlayerControllerClass = APlayerController::StaticClass();
 }
 
-AGZGameModeBase::~AGZGameModeBase()
+AGZLobbyMode::~AGZLobbyMode()
 {
 }
 
-void AGZGameModeBase::StartPlay()
+void AGZLobbyMode::StartPlay()
 {
 	Super::StartPlay();
+
+	//GZ_LOG_S(GZ, Warning);
+
+	//UGZUIManager
 }
 
-void AGZGameModeBase::BeginPlay()
+void AGZLobbyMode::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -27,13 +31,10 @@ void AGZGameModeBase::BeginPlay()
 	InitializeUI();
 }
 
-void AGZGameModeBase::InitializeUI()
+void AGZLobbyMode::InitializeUI()
 {
-	// 레벨 세팅에 기본으로 적용해놔서 일단 사용하자.
-
 	EGZUIMode UIMode;
 	UIMode = EGZUIMode::Lobby;
-	//UIMode = EGZUIMode::Ingame;
 
 	UGZUIManager::GetUIManager().Initialize(UIMode);
 }

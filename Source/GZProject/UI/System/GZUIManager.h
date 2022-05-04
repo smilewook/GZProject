@@ -4,9 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
-
 #include "UI/Define/GZDefine.h"
-
 #include "GZUIManager.generated.h"
 
 /**
@@ -40,7 +38,7 @@ public:
 	* Main Screen의 UIState를 변경함
 	* @param MainUIState 변경하고자 하는 메인스크린 UIState
 	*/
-	void ChangeUIState(EGZUIMode MainUIState);
+	void ChangeUIState(EGZUIState MainUIState);
 
 	/**
 	* UI STATE를 리턴함
@@ -54,7 +52,21 @@ public:
 	* @param UIState
 	* @return FString 현재 UIState 이름
 	*/
-	FString GetUIStateNameByEnum(EGZUIState UIState);
+	FString GetUIStateNameByEnum(EGZUIState UIState) const;
+
+	/**
+	* UI 가 오픈되어 있는지 확인
+	* @param UIContent
+	* @return BOOL TRUE=열려있음, FALSE=닫힘.
+	*/
+	bool IsOpenedUI(FString UIState);
+
+	/**
+	* UI 가 오픈되어 있는지 확인
+	* @param UIName
+	* @return BOOL TRUE=열려있음, FALSE=닫힘.
+	*/
+	bool IsOpenedUIByName(FString UIName);
 
 	/**
 	* UI Screen 리턴함

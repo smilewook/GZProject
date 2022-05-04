@@ -44,9 +44,9 @@ void UGZUIManager::Deinitialize()
 	GameInstance = nullptr;
 }
 
-void UGZUIManager::Initialize(EGZUIMode EUIMode)
+void UGZUIManager::Initialize(EGZUIMode UIMode)
 {
-	GZ_LOG(GZ, Warning, TEXT("UGZUIManager::Initialize!! With UIMode"));
+	GZ_LOG(GZ, Warning, TEXT("UGZUIManager::Initialize!! With UIMode = %d"), UIMode);
 
 	// 메인스크린 생성
 	if (!IsValid(MainScreen))
@@ -57,10 +57,10 @@ void UGZUIManager::Initialize(EGZUIMode EUIMode)
 		MainScreen->AddToViewport();
 	}
 	
-	//MainScreen->SetUIMode(MainScreenUIMode);
+	MainScreen->SetUIMode(UIMode);
 }
 
-void UGZUIManager::ChangeUIState(EGZUIMode MainUIState)
+void UGZUIManager::ChangeUIState(EGZUIState MainUIState)
 {
 	GZ_LOG(GZ, Warning, TEXT("UIManager::ChangeUIState  = %s / Solo"), *GetUIStateNameByEnum(MainUIState));
 
@@ -76,7 +76,7 @@ EGZUIState UGZUIManager::GetUIState(EGZUIScreen TargetScreen) const
 	return MainScreen->GetUIState();
 }
 
-FString UGZUIManager::GetUIStateNameByEnum(EGZUIState UIState)
+FString UGZUIManager::GetUIStateNameByEnum(EGZUIState UIState) const
 {
 	//GZ_LOG(GZ, Warning, TEXT("UIManager::GetUIStateNameByEnum, UIState = %d"), UIState);
 
@@ -87,6 +87,9 @@ FString UGZUIManager::GetUIStateNameByEnum(EGZUIState UIState)
 	case EGZUIState::AdminSetting:					Result = TEXT("AdminSetting");						break;
 	case EGZUIState::AnalysisHole:					Result = TEXT("AnalysisHole");						break;
 	case EGZUIState::CCSelection:					Result = TEXT("CCSelection");						break;
+	case EGZUIState::ChallengeTypeSelection:		Result = TEXT("ChallengeTypeSelection");			break;
+	case EGZUIState::ChallengeSelection:			Result = TEXT("ChallengeSelection");				break;
+	case EGZUIState::ClubSelection:					Result = TEXT("ClubSelection");						break;
 	case EGZUIState::CoursePreview:					Result = TEXT("CoursePreview");						break;
 	case EGZUIState::DropBall:						Result = TEXT("DropBall");							break;
 	case EGZUIState::ExitProgram:					Result = TEXT("ExitProgram");						break;
@@ -94,13 +97,19 @@ FString UGZUIManager::GetUIStateNameByEnum(EGZUIState UIState)
 	case EGZUIState::GreenUndulation:				Result = TEXT("GreenUndulation");					break;
 	case EGZUIState::HoleEnd:						Result = TEXT("HoleEnd");							break;
 	case EGZUIState::HoleTimeSetting:				Result = TEXT("HoleTimeSetting");					break;
+	case EGZUIState::HoleTypeSelection:				Result = TEXT("HoleTypeSelection");					break;
+	case EGZUIState::InGame:						Result = TEXT("InGame");							break;
 	case EGZUIState::Intro:							Result = TEXT("Intro");								break;
 	case EGZUIState::Loading:						Result = TEXT("Loading");							break;
+	case EGZUIState::Login:							Result = TEXT("Login");								break;
 	case EGZUIState::LowView:						Result = TEXT("LowView");							break;
 	case EGZUIState::Menu:							Result = TEXT("Menu");								break;
+	case EGZUIState::ModeGuide:						Result = TEXT("ModeGuide");							break;
 	case EGZUIState::ModeSelection:					Result = TEXT("ModeSelection");						break;
+	case EGZUIState::Patch:							Result = TEXT("Patch");								break;
 	case EGZUIState::PlayerRegistration:			Result = TEXT("PlayerRegistration");				break;
 	case EGZUIState::PlayerSetting:					Result = TEXT("PlayerSetting");						break;
+	case EGZUIState::RangeTypeSelection:			Result = TEXT("RangeTypeSelection");				break;
 	case EGZUIState::Replay:						Result = TEXT("Replay");							break;
 	case EGZUIState::RoundBoard:					Result = TEXT("RoundBoard");						break;
 	case EGZUIState::Scorecard:						Result = TEXT("Scorecard");							break;
@@ -115,6 +124,16 @@ FString UGZUIManager::GetUIStateNameByEnum(EGZUIState UIState)
 	}
 
 	return Result;
+}
+
+bool UGZUIManager::IsOpenedUI(FString UIState)
+{
+	return true;
+}
+
+bool UGZUIManager::IsOpenedUIByName(FString UIName)
+{
+	return true;
 }
 
 UGZUIScreenBase* UGZUIManager::GetUIScreenWidget(EGZUIScreen UIScreen)
