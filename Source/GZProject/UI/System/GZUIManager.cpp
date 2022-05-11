@@ -3,6 +3,7 @@
 
 #include "GZUIManager.h"
 #include "GZGameInstance.h"
+#include "UI/UserWidget/UIComponent/GZUIComponent.h"
 #include "UI/UserWidget/UIScreen/GZUIScreenBase.h"
 
 
@@ -62,7 +63,7 @@ void UGZUIManager::Initialize(EGZUIMode UIMode)
 
 void UGZUIManager::ChangeUIState(EGZUIState MainUIState)
 {
-	GZ_LOG(GZ, Warning, TEXT("UIManager::ChangeUIState  = %s / Solo"), *GetUIStateNameByEnum(MainUIState));
+	GZ_LOG(GZ, Warning, TEXT("UIManager::ChangeUIState  = %d / Solo"), MainUIState);
 
 	if (IsValid(MainScreen))
 	{
@@ -76,48 +77,58 @@ EGZUIState UGZUIManager::GetUIState(EGZUIScreen TargetScreen) const
 	return MainScreen->GetUIState();
 }
 
-FString UGZUIManager::GetUIStateNameByEnum(EGZUIState UIState) const
+FString UGZUIManager::GetUINameByEnum(EGZUIName UIEnum) const
 {
-	//GZ_LOG(GZ, Warning, TEXT("UIManager::GetUIStateNameByEnum, UIState = %d"), UIState);
+	//GZ_LOG(GZ, Warning, TEXT("UIManager::GetUINameByEnum, UIName = %d"), UIEnum);
 
 	FString Result;
 
-	switch (UIState)
+	switch (UIEnum)
 	{
-	case EGZUIState::AdminSetting:					Result = TEXT("AdminSetting");						break;
-	case EGZUIState::AnalysisHole:					Result = TEXT("AnalysisHole");						break;
-	case EGZUIState::CCSelection:					Result = TEXT("CCSelection");						break;
-	case EGZUIState::ChallengeTypeSelection:		Result = TEXT("ChallengeTypeSelection");			break;
-	case EGZUIState::ChallengeSelection:			Result = TEXT("ChallengeSelection");				break;
-	case EGZUIState::ClubSelection:					Result = TEXT("ClubSelection");						break;
-	case EGZUIState::CoursePreview:					Result = TEXT("CoursePreview");						break;
-	case EGZUIState::DropBall:						Result = TEXT("DropBall");							break;
-	case EGZUIState::ExitProgram:					Result = TEXT("ExitProgram");						break;
-	case EGZUIState::GameEnd:						Result = TEXT("GameEnd");							break;
-	case EGZUIState::GreenUndulation:				Result = TEXT("GreenUndulation");					break;
-	case EGZUIState::HoleEnd:						Result = TEXT("HoleEnd");							break;
-	case EGZUIState::HoleTimeSetting:				Result = TEXT("HoleTimeSetting");					break;
-	case EGZUIState::HoleTypeSelection:				Result = TEXT("HoleTypeSelection");					break;
-	case EGZUIState::InGame:						Result = TEXT("InGame");							break;
-	case EGZUIState::Intro:							Result = TEXT("Intro");								break;
-	case EGZUIState::Loading:						Result = TEXT("Loading");							break;
-	case EGZUIState::Login:							Result = TEXT("Login");								break;
-	case EGZUIState::LowView:						Result = TEXT("LowView");							break;
-	case EGZUIState::Menu:							Result = TEXT("Menu");								break;
-	case EGZUIState::ModeGuide:						Result = TEXT("ModeGuide");							break;
-	case EGZUIState::ModeSelection:					Result = TEXT("ModeSelection");						break;
-	case EGZUIState::Patch:							Result = TEXT("Patch");								break;
-	case EGZUIState::PlayerRegistration:			Result = TEXT("PlayerRegistration");				break;
-	case EGZUIState::PlayerSetting:					Result = TEXT("PlayerSetting");						break;
-	case EGZUIState::RangeTypeSelection:			Result = TEXT("RangeTypeSelection");				break;
-	case EGZUIState::Replay:						Result = TEXT("Replay");							break;
-	case EGZUIState::RoundBoard:					Result = TEXT("RoundBoard");						break;
-	case EGZUIState::Scorecard:						Result = TEXT("Scorecard");							break;
-	case EGZUIState::Shot:							Result = TEXT("Shot");								break;
-	case EGZUIState::ShotEnd:						Result = TEXT("ShotEnd");							break;
-	case EGZUIState::ShotReady:						Result = TEXT("ShotReady");							break;
-	case EGZUIState::TimeSetting:					Result = TEXT("TimeSetting");						break;
-	case EGZUIState::None:
+	case EGZUIName::Admin:								Result = TEXT("Admin");								break;
+	case EGZUIName::Advertisement:						Result = TEXT("Advertisement");						break;
+	case EGZUIName::Attention:							Result = TEXT("Attention");							break;
+	case EGZUIName::BallIndicator:						Result = TEXT("BallIndicator");						break;
+	case EGZUIName::BallSensor:							Result = TEXT("BallSensor");						break;
+	case EGZUIName::ChallengeCelebration:				Result = TEXT("ChallengeCelebration");				break;
+	case EGZUIName::ChallengeLevelUp:					Result = TEXT("ChallengeLevelUp");					break;
+	case EGZUIName::ChallengeRanking:					Result = TEXT("ChallengeRanking");					break;
+	case EGZUIName::ChallengeResult:					Result = TEXT("ChallengeResult");					break;
+	case EGZUIName::ClubSelect:							Result = TEXT("ClubSelect");						break;
+	case EGZUIName::CommonOption:						Result = TEXT("CommonOption");						break;
+	case EGZUIName::CommonPopup:						Result = TEXT("CommonPopup");						break;
+	case EGZUIName::ContactLesson:						Result = TEXT("HoleTimeSetting");					break;
+	case EGZUIName::FinalResult:						Result = TEXT("FinalResult");						break;
+	case EGZUIName::GoodsSelect:						Result = TEXT("GoodsSelect");						break;
+	case EGZUIName::GroundAttribute:					Result = TEXT("GroundAttribute");					break;
+	case EGZUIName::GTMTime:							Result = TEXT("GTMTime");							break;
+	case EGZUIName::GuestTimeSelect:					Result = TEXT("GuestTimeSelect");					break;
+	case EGZUIName::IdleRank:							Result = TEXT("IdleRank");							break;
+	case EGZUIName::InterimResult:						Result = TEXT("InterimResult");						break;
+	case EGZUIName::Loading:							Result = TEXT("Loading");							break;
+	case EGZUIName::LocationSelect:						Result = TEXT("LocationSelect");					break;
+	case EGZUIName::Login:								Result = TEXT("Login");								break;
+	case EGZUIName::Menu:								Result = TEXT("Menu");								break;
+	case EGZUIName::ModeInfo:							Result = TEXT("ModeInfo");							break;
+	case EGZUIName::Nasmo:								Result = TEXT("Nasmo");								break;
+	case EGZUIName::NasmoAuto:							Result = TEXT("NasmoAuto");							break;
+	case EGZUIName::Network:							Result = TEXT("Network");							break;
+	case EGZUIName::Notice:								Result = TEXT("Notice");							break;
+	case EGZUIName::Password:							Result = TEXT("Password");							break;
+	case EGZUIName::PlayerDetail:						Result = TEXT("PlayerDetail");						break;
+	case EGZUIName::PlayerInfo:							Result = TEXT("PlayerInfo");						break;
+	case EGZUIName::RoundOption:						Result = TEXT("RoundOption");						break;
+	case EGZUIName::ScreenMinimap:						Result = TEXT("ScreenMinimap");						break;
+	case EGZUIName::SensorReady:						Result = TEXT("SensorReady");						break;
+	case EGZUIName::ShotDataClub:						Result = TEXT("ShotDataClub");						break;
+	case EGZUIName::ShotDataRange:						Result = TEXT("ShotDataRange");						break;
+	case EGZUIName::ShotHeight:							Result = TEXT("ShotHeight");						break;
+	case EGZUIName::ShotResult:							Result = TEXT("ShotResult");						break;
+	case EGZUIName::ShowCombo:							Result = TEXT("ShowCombo");							break;
+	case EGZUIName::TargetInfo:							Result = TEXT("TargetInfo");						break;
+	case EGZUIName::TargetShow:							Result = TEXT("TargetShow");						break;
+	case EGZUIName::TeeHeight:							Result = TEXT("TeeHeight");							break;
+	case EGZUIName::None:
 	default:
 		Result = TEXT("None");
 		break;
@@ -126,14 +137,38 @@ FString UGZUIManager::GetUIStateNameByEnum(EGZUIState UIState) const
 	return Result;
 }
 
-bool UGZUIManager::IsOpenedUI(FString UIState)
+bool UGZUIManager::IsOpenedUI(EGZUIName UIEnum)
 {
-	return true;
+	// 현재 로드되어 있는 UI중에서 오픈(visible)되어 있는 지 체크.
+	UGZUIComponent* UIComponent;
+	UIComponent = FindUIComponentByEnum(UIEnum);
+	if (UIComponent != nullptr)
+	{
+		return UIComponent->GetIsVisible();
+	}
+
+	return false;
 }
 
 bool UGZUIManager::IsOpenedUIByName(FString UIName)
 {
+	
 	return true;
+}
+
+UGZUIComponent* UGZUIManager::FindUIComponentByEnum(EGZUIName UIEnum)
+{
+	// 현재 스크린에 로드된 UI중에서 찾기.
+	TArray<UGZUIComponent*> UIComponentArray;
+	UIComponentArray = MainScreen->GetUIComponentsOnScreen();
+	for (UGZUIComponent* UIComponent : UIComponentArray)
+	{
+		if (UIComponent->GetUIEnum() == UIEnum)
+		{
+			return UIComponent;
+		}
+	}
+	return nullptr;
 }
 
 UGZUIScreenBase* UGZUIManager::GetUIScreenWidget(EGZUIScreen UIScreen)

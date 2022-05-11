@@ -2,11 +2,12 @@
 
 
 #include "GZUIComponent.h"
+#include "UI/System/GZUIManager.h"
 
 UGZUIComponent::UGZUIComponent(const FObjectInitializer& ObjectInitializer)
 	:UUserWidget(ObjectInitializer)
 {
-	UIName = TEXT("NoName");
+	UIEnum = EGZUIName::None;
 }
 
 void UGZUIComponent::PostLoad()
@@ -31,16 +32,21 @@ void UGZUIComponent::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	Super::NativeTick(MyGeometry, InDeltaTime);
 }
 
-void UGZUIComponent::SetUIName(FString InUIName)
+void UGZUIComponent::SetUIEnum(EGZUIName InUIEnum)
 {
-	UIName = InUIName;
+	UIEnum = InUIEnum;
 }
 
-FString UGZUIComponent::GetUIName()
+FString UGZUIComponent::GetUIName() const
 {
-	if (UIName.IsEmpty())
+	FString UIName;
+	if (UIEnum == EGZUIName::None)
 	{
 		UIName = TEXT("NoName");
+	}
+	else
+	{
+		UIName = UGZUIManager::GetUIManager().GetUINameByEnum(UIEnum);
 	}
 	
 	return UIName;

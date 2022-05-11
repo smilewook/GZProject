@@ -30,18 +30,23 @@ public:
 	//~ End UUserWidget Interface
 
 	/**
-	* UI 이름 설정
-	* @param UIName을 설정
+	* UIEnum 설정
+	* @param UIEnum
 	*/
-	void SetUIName(FString InUIName);
+	void SetUIEnum(EGZUIName InUIEnum);
+
+	/**
+	* UIEnum 을 리턴함.
+	*/
+	EGZUIName GetUIEnum() const { return UIEnum; }
 
 	/**
 	* UI 이름을 리턴함.
 	*/
-	FString GetUIName();
+	FString GetUIName() const;
 
 protected:
-	/** 현재 UIName */
-	FString UIName;
+	/** 현재 UIEnum */
+	EGZUIName UIEnum;
 
 };

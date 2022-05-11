@@ -24,16 +24,20 @@ public:
 	EGZUIState StateName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UIData")
+	EGZUIName UIName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UIData")
 	TArray<TSubclassOf<class UGZUIComponent>> ComponentClassArray;
 
 public:
-	FUILoadData() : ModeName(EGZUIMode::None), StateName(EGZUIState::None)
+	FUILoadData() : ModeName(EGZUIMode::None), StateName(EGZUIState::None), UIName(EGZUIName::None)
 	{}
 
 	void Reset()
 	{
 		ModeName = EGZUIMode::None;
 		StateName = EGZUIState::None;
+		UIName = EGZUIName::None;
 		ComponentClassArray.Reset();
 	}
 };

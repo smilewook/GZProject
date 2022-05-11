@@ -48,18 +48,18 @@ public:
 	EGZUIState GetUIState(EGZUIScreen TargetScreen) const;
 
 	/**
-	* UI STATE 이름을 리턴함
-	* @param UIState
-	* @return FString 현재 UIState 이름
+	* UI 이름을 리턴함
+	* @param UIEnum
+	* @return FString 현재 UI 이름
 	*/
-	FString GetUIStateNameByEnum(EGZUIState UIState) const;
+	FString GetUINameByEnum(EGZUIName UIEnum) const;
 
 	/**
 	* UI 가 오픈되어 있는지 확인
-	* @param UIContent
+	* @param UIEnum
 	* @return BOOL TRUE=열려있음, FALSE=닫힘.
 	*/
-	bool IsOpenedUI(FString UIState);
+	bool IsOpenedUI(EGZUIName UIEnum);
 
 	/**
 	* UI 가 오픈되어 있는지 확인
@@ -69,8 +69,14 @@ public:
 	bool IsOpenedUIByName(FString UIName);
 
 	/**
-	* UI Screen 리턴함
-	* @param UIScreen
+	* UIComponent 리턴함
+	* @param EGZUIName UIEnum
+	*/
+	class UGZUIComponent* FindUIComponentByEnum(EGZUIName UIEnum);
+
+	/**
+	* UIScreen 리턴함
+	* @param EGZUIScreen UIScreen
 	*/
 	class UGZUIScreenBase* GetUIScreenWidget(EGZUIScreen UIScreen);
 
