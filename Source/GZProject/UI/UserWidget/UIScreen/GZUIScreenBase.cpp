@@ -2,6 +2,7 @@
 
 
 #include "GZUIScreenBase.h"
+#include "UI/System/GZUIManager.h"
 #include "UI/UserWidget/UIComponent/GZUIComponent.h"
 #include "UI/UserWidget/UIScreenLayer/GZUIScreenLayer.h"
 
@@ -41,7 +42,11 @@ void UGZUIScreenBase::ChangeUIState(EGZUIState NewUIState)
 	ensure(CurUIMode != EGZUIMode::None);
 
 	// 새로운 UIState에 해당하는 데이터를 가져옴
+	NewLoadData = UGZUIManager::GetUIManager().GetUIStateData(NewUIState);
+	GZ_LOG(GZ, Warning, TEXT("UIScreenBase::ChangeUIState() NewLoadData.StateName= %s"), &(NewLoadData.StateName));
+	 
 	// 이전 로드된 UIComponent를 삭제 대상에 일단 모두 다 넣음
+	FUILoadData LoadDataToRemove = CurLoadData;
 
 	// 리셋 플래그 확인
 	if (bResetUI)
@@ -52,6 +57,9 @@ void UGZUIScreenBase::ChangeUIState(EGZUIState NewUIState)
 	else
 	{
 		// 리셋이 아닌 경우, 삭제하지 말아야 할 UIComponent들을 리스트에서 제외
+		LoadDataToRemove.ComponentClassArray.RemoveAll([&](TSubclassOf<UGZUIComponent> UIComponent) {
+			return (NewLoadData.ComponentClassArray.IndexOfByKey(UIComponent) != INDEX_NONE);
+		});
 	}
 
 	/*// 삭제 대상이 된 UIComponent들을 추려서 가져옴

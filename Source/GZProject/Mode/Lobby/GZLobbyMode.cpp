@@ -29,6 +29,9 @@ void AGZLobbyMode::BeginPlay()
 
 	// UI 초기화
 	InitializeUI();
+
+	// State 상태를 로딩 상태로 전환
+	// StateManager를 만들어서 상태 전환 해줄 것.
 }
 
 void AGZLobbyMode::InitializeUI()

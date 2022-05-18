@@ -27,7 +27,9 @@ void UGZUIManager::Initialize(FSubsystemCollectionBase& Collection)
 
 	GameInstance = GetTypedOuter<UGZGameInstance>();
 	
+	TArray<FName> NameArray;
 	// UIMode 및 UIState 데이터 테이블
+	GameInstance->GetUILoadData(NameArray, UILoadDataArray);
 
 	// UI 배치 메타데이터
 
@@ -75,6 +77,34 @@ void UGZUIManager::ChangeUIState(EGZUIState MainUIState)
 EGZUIState UGZUIManager::GetUIState(EGZUIScreen TargetScreen) const
 {
 	return MainScreen->GetUIState();
+}
+
+FUILoadData UGZUIManager::GetUIStateData(EGZUIState UIState)
+{
+	check(UILoadDataArray.Num() > 0);
+
+	FUILoadData NoneData;
+	if (UIState == EGZUIState::None)
+	{
+		return NoneData;
+	}
+
+	// UILoadData 배열에서 필요한 데이터의 인덱스 추출.
+	int32 RowIndex = UILoadDataArray.IndexOfByPredicate([&](const FUILoadData* UILoadData) {
+		return (UILoadData->StateEnum == UIState);
+	});
+
+	ensure(RowIndex != INDEX_NONE);
+	if (RowIndex == INDEX_NONE)
+	{
+		return NoneData;
+	}
+
+	// UILoadData 에서 UIState에 따른 로드(Visible) 데이터 추출.
+	FUILoadData* UILoadData = UILoadDataArray[RowIndex];
+
+	// 스테이터스로 로드할 데이터를 찾는데 
+	return *UILoadData;
 }
 
 FString UGZUIManager::GetUINameByEnum(EGZUIName UIEnum) const

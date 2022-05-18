@@ -4,6 +4,7 @@
 
 #include "GZProject.h"
 #include "Blueprint/UserWidget.h"
+#include "UI/Data/GZUILoadData.h"
 #include "UI/Define/GZDefine.h"
 #include "GZUIScreenBase.generated.h"
 
@@ -74,6 +75,12 @@ protected:
 
 	/** 화면 상에 배치된 UIComponent 배열*/
 	TArray<class UGZUIComponent*> UIComponentsOnScreen;
+
+	/** 새롭게 적용 중인 UIState에 대한 데이터 */
+	FUILoadData NewLoadData;
+
+	/** 현재 적용 중인 UIState에 대한 데이터 */
+	FUILoadData CurLoadData;
 
 	/** UIState 변경 시 초기화(UIComponent 모두를 새로 재생성) 작업을 할 지 결정하는 플래그 */
 	bool bResetUI = false;

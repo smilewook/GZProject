@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
+#include "UI/Data/GZUILoadData.h"
 #include "UI/Define/GZDefine.h"
 #include "GZUIManager.generated.h"
 
@@ -46,6 +47,13 @@ public:
 	* @return EGZUIState 현재 UIState
 	*/
 	EGZUIState GetUIState(EGZUIScreen TargetScreen) const;
+
+	/**
+	* UIState를 전달 받아 UIStateData를 리턴함
+	* @param UIState UIState 값
+	* @return FUILoadData
+	*/
+	FUILoadData GetUIStateData(EGZUIState UIState);
 
 	/**
 	* UI 이름을 리턴함
@@ -93,4 +101,7 @@ private:
 	/** 메인 스크린 */
  	UPROPERTY(Transient)
  	class UGZUIScreenBase* MainScreen;
+
+	/** UIState, UIMode 의 정의 */
+	TArray<FUILoadData*> UILoadDataArray;
 };
