@@ -12,7 +12,7 @@
  */
 
 USTRUCT(BlueprintType)
-struct FUILoadData : public FTableRowBase
+struct FGZUILoadData : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -33,7 +33,7 @@ public:
 	TArray<TSubclassOf<class UGZUIComponent>> ComponentClassArray;
 
 public:
-	FUILoadData() : StateEnum(EGZUIState::None), StateName(TEXT("None")), ModeEnum(EGZUIMode::None), ModeName(TEXT("None"))
+	FGZUILoadData() : StateEnum(EGZUIState::None), StateName(TEXT("None")), ModeEnum(EGZUIMode::None), ModeName(TEXT("None"))
 	{}
 
 	void Reset()
@@ -44,11 +44,4 @@ public:
 		ModeName = TEXT("None");
 		ComponentClassArray.Reset();
 	}
-};
-
-UCLASS()
-class GZPROJECT_API UGZUILoadData : public UDataTable
-{
-	GENERATED_BODY()
-	
 };

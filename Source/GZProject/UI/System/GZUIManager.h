@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
+#include "UI/Data/GZUIInfoData.h"
 #include "UI/Data/GZUILoadData.h"
 #include "UI/Define/GZDefine.h"
 #include "GZUIManager.generated.h"
@@ -51,9 +52,9 @@ public:
 	/**
 	* UIState를 전달 받아 UIStateData를 리턴함
 	* @param UIState UIState 값
-	* @return FUILoadData
+	* @return FGZUILoadData
 	*/
-	FUILoadData GetUIStateData(EGZUIState UIState);
+	FGZUILoadData GetUIStateData(EGZUIState UIState);
 
 	/**
 	* UI 이름을 리턴함
@@ -88,20 +89,30 @@ public:
 	*/
 	class UGZUIScreenBase* GetUIScreenWidget(EGZUIScreen UIScreen);
 
+	/**
+	 * UIInfo 데이터를 리턴함
+	 * @param TargetClass WidgetBlueprint의 Class
+	 * @return FGZUIInfoData InfoData
+	 */
+	FGZUIInfoData GetUIInfoData(UClass* TargetClass);
+
 	// UI 데이터 받아서 목록 생성
 	//
 
 protected:
 	UPROPERTY()
-	TSubclassOf<class UGZUIScreenBase> MainScreenClass;
+	TSubclassOf<class UGZUIMainScreen> MainScreenClass;
 private:
 	/** GameInstance */
 	static class UGZGameInstance* GameInstance;
 
 	/** 메인 스크린 */
  	UPROPERTY(Transient)
- 	class UGZUIScreenBase* MainScreen;
+ 	class UGZUIMainScreen* MainScreen;
 
 	/** UIState, UIMode 의 정의 */
-	TArray<FUILoadData*> UILoadDataArray;
+	TArray<FGZUILoadData*> UILoadDataArray;
+
+	/** UIComponent 위치 데이터 */
+	TArray<FGZUIInfoData*> UIInfoDataArray;
 };

@@ -4,7 +4,7 @@
 #include "GZUIManager.h"
 #include "GZGameInstance.h"
 #include "UI/UserWidget/UIComponent/GZUIComponent.h"
-#include "UI/UserWidget/UIScreen/GZUIScreenBase.h"
+#include "UI/UserWidget/UIScreen/GZUIMainScreen.h"
 
 
 UGZGameInstance* UGZUIManager::GameInstance;
@@ -14,7 +14,7 @@ UGZUIManager::UGZUIManager()
 	GZ_LOG_S(GZ, Warning);
 
 	// 메인 스크린 클래스 블루프린트 위젯
-	static ConstructorHelpers::FClassFinder<UGZUIScreenBase> MAIN_SCREEN_WIDGET(TEXT("/Game/UI/WidgetBlueprint/UIScreen/WB_Screen.WB_Screen_C"));
+	static ConstructorHelpers::FClassFinder<UGZUIMainScreen> MAIN_SCREEN_WIDGET(TEXT("/Game/UI/WidgetBlueprint/UIScreen/WB_MainScreen.WB_MainScreen_C"));
 	if (MAIN_SCREEN_WIDGET.Succeeded())
 	{
 		MainScreenClass = MAIN_SCREEN_WIDGET.Class;
@@ -54,7 +54,7 @@ void UGZUIManager::Initialize(EGZUIMode UIMode)
 	// 메인스크린 생성
 	if (!IsValid(MainScreen))
 	{
-		MainScreen = CreateWidget<UGZUIScreenBase>(GameInstance, MainScreenClass);
+		MainScreen = CreateWidget<UGZUIMainScreen>(GameInstance, MainScreenClass);
 		//MainScreen->OnScreenUIStateChanged.AddUObject(this, &ThisClass::OnScreenUIStateChanged);
 	
 		MainScreen->AddToViewport();
@@ -79,18 +79,18 @@ EGZUIState UGZUIManager::GetUIState(EGZUIScreen TargetScreen) const
 	return MainScreen->GetUIState();
 }
 
-FUILoadData UGZUIManager::GetUIStateData(EGZUIState UIState)
+FGZUILoadData UGZUIManager::GetUIStateData(EGZUIState UIState)
 {
 	check(UILoadDataArray.Num() > 0);
 
-	FUILoadData NoneData;
+	FGZUILoadData NoneData;
 	if (UIState == EGZUIState::None)
 	{
 		return NoneData;
 	}
 
 	// UILoadData 배열에서 필요한 데이터의 인덱스 추출.
-	int32 RowIndex = UILoadDataArray.IndexOfByPredicate([&](const FUILoadData* UILoadData) {
+	int32 RowIndex = UILoadDataArray.IndexOfByPredicate([&](const FGZUILoadData* UILoadData) {
 		return (UILoadData->StateEnum == UIState);
 	});
 
@@ -101,7 +101,7 @@ FUILoadData UGZUIManager::GetUIStateData(EGZUIState UIState)
 	}
 
 	// UILoadData 에서 UIState에 따른 로드(Visible) 데이터 추출.
-	FUILoadData* UILoadData = UILoadDataArray[RowIndex];
+	FGZUILoadData* UILoadData = UILoadDataArray[RowIndex];
 
 	// 스테이터스로 로드할 데이터를 찾는데 
 	return *UILoadData;
@@ -209,6 +209,28 @@ UGZUIScreenBase* UGZUIManager::GetUIScreenWidget(EGZUIScreen UIScreen)
 	}
 
 	return MainScreen;
+}
+
+FGZUIInfoData UGZUIManager::GetUIInfoData(UClass* TargetClass)
+{
+	FGZUIInfoData NoneData;
+
+	if (UIInfoDataArray.Num() <= 0)
+	{
+		return NoneData;
+	}
+
+	int32 RowIndex = UIInfoDataArray.IndexOfByPredicate([&](const FGZUIInfoData* InfoData) {
+		return (InfoData->WidgetBlueprintClass == TargetClass);
+		});
+
+	if (RowIndex == INDEX_NONE)
+	{
+		GZ_LOG(GZ, Warning, TEXT("UIManager::GetUIInfoData() is Empty, UIName = %s"), *TargetClass->GetName());
+		return NoneData;
+	}
+
+	return *UIInfoDataArray[RowIndex];
 }
 
 UGZUIManager& UGZUIManager::GetUIManager()

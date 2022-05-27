@@ -24,7 +24,7 @@ public:
 	virtual ~UGZGameInstance();
 
 	// UILoadData 가져오기.
-	void GetUILoadData(TArray<FName>& KeyArray, TArray<struct FUILoadData*>& RowArray);
+	void GetUILoadData(TArray<FName>& KeyArray, TArray<struct FGZUILoadData*>& RowArray);
 
 private:
 	void InitUILoadData();
@@ -34,6 +34,6 @@ private:
 	class UDataTable* UILoadDataTable;
 
 	// 테스트하기 위한 로드 데이터 만들기
-	TArray<FUILoadData*> UILoadDataArray;
+	TArray<FGZUILoadData*> UILoadDataArray;
 
 };
