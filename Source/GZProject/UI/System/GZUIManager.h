@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "UI/Data/GZUIInfoData.h"
-#include "UI/Data/GZUILoadData.h"
+#include "UI/Data/GZUILoadDataTable.h"
 #include "UI/Define/GZDefine.h"
 #include "GZUIManager.generated.h"
 
@@ -52,9 +52,9 @@ public:
 	/**
 	* UIState를 전달 받아 UIStateData를 리턴함
 	* @param UIState UIState 값
-	* @return FGZUILoadData
+	* @return FGZUILoadDataTable
 	*/
-	FGZUILoadData GetUIStateData(EGZUIState UIState);
+	FGZUILoadDataTable GetUIStateData(EGZUIState UIState);
 
 	/**
 	* UI 이름을 리턴함
@@ -111,7 +111,7 @@ private:
  	class UGZUIMainScreen* MainScreen;
 
 	/** UIState, UIMode 의 정의 */
-	TArray<FGZUILoadData*> UILoadDataArray;
+	TArray<FGZUILoadDataTable*> UILoadDataArray;
 
 	/** UIComponent 위치 데이터 */
 	TArray<FGZUIInfoData*> UIInfoDataArray;

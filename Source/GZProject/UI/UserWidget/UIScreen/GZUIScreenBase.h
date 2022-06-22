@@ -4,7 +4,7 @@
 
 #include "GZProject.h"
 #include "Blueprint/UserWidget.h"
-#include "UI/Data/GZUILoadData.h"
+#include "UI/Data/GZUILoadDataTable.h"
 #include "UI/Define/GZDefine.h"
 #include "GZUIScreenBase.generated.h"
 
@@ -58,7 +58,7 @@ public:
 	* @param StateDataToRemove 찾고자 하는 위젯 목록
 	* @return TArray<UGZUIComponent*> 위젯 포인터를 담은 배열
 	*/
-	TArray<class UGZUIComponent*> GetUIComponentsToRemove(FGZUILoadData& LoadDataToRemove);
+	TArray<class UGZUIComponent*> GetUIComponentsToRemove(FGZUILoadDataTable& LoadDataToRemove);
 
 protected:
 	
@@ -67,7 +67,7 @@ protected:
 	* @param InStateData 변경할 UIState에 해당하는 Data
 	*/
 	UFUNCTION()
-	void AttachNewState(FGZUILoadData InLoadData);
+	void AttachNewState(FGZUILoadDataTable InLoadData);
 
 	/**
 	* UIComponent를 대상 Layer에 추가함
@@ -93,10 +93,10 @@ protected:
 	TArray<class UGZUIComponent*> UIComponentsToRemove;
 
 	/** 새롭게 적용 중인 UIState에 대한 데이터 */
-	FGZUILoadData NewLoadData;
+	FGZUILoadDataTable NewLoadData;
 
 	/** 현재 적용 중인 UIState에 대한 데이터 */
-	FGZUILoadData CurLoadData;
+	FGZUILoadDataTable CurLoadData;
 
 	/** UIState 변경 시 초기화(UIComponent 모두를 새로 재생성) 작업을 할 지 결정하는 플래그 */
 	bool bResetUI = false;

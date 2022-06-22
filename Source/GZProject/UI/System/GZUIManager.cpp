@@ -79,18 +79,18 @@ EGZUIState UGZUIManager::GetUIState(EGZUIScreen TargetScreen) const
 	return MainScreen->GetUIState();
 }
 
-FGZUILoadData UGZUIManager::GetUIStateData(EGZUIState UIState)
+FGZUILoadDataTable UGZUIManager::GetUIStateData(EGZUIState UIState)
 {
 	check(UILoadDataArray.Num() > 0);
 
-	FGZUILoadData NoneData;
+	FGZUILoadDataTable NoneData;
 	if (UIState == EGZUIState::None)
 	{
 		return NoneData;
 	}
 
 	// UILoadData 배열에서 필요한 데이터의 인덱스 추출.
-	int32 RowIndex = UILoadDataArray.IndexOfByPredicate([&](const FGZUILoadData* UILoadData) {
+	int32 RowIndex = UILoadDataArray.IndexOfByPredicate([&](const FGZUILoadDataTable* UILoadData) {
 		return (UILoadData->StateEnum == UIState);
 	});
 
@@ -101,7 +101,7 @@ FGZUILoadData UGZUIManager::GetUIStateData(EGZUIState UIState)
 	}
 
 	// UILoadData 에서 UIState에 따른 로드(Visible) 데이터 추출.
-	FGZUILoadData* UILoadData = UILoadDataArray[RowIndex];
+	FGZUILoadDataTable* UILoadData = UILoadDataArray[RowIndex];
 
 	// 스테이터스로 로드할 데이터를 찾는데 
 	return *UILoadData;

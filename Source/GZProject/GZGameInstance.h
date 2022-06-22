@@ -5,7 +5,7 @@
 #include "GZProject.h"
 #include "Engine/GameInstance.h"
 #include "Engine/DataTable.h"
-#include "UI/Data/GZUILoadData.h"
+#include "UI/Data/GZUILoadDataTable.h"
 #include "GZGameInstance.generated.h"
 
 // 
@@ -24,7 +24,7 @@ public:
 	virtual ~UGZGameInstance();
 
 	// UILoadData 가져오기.
-	void GetUILoadData(TArray<FName>& KeyArray, TArray<struct FGZUILoadData*>& RowArray);
+	void GetUILoadData(TArray<FName>& KeyArray, TArray<struct FGZUILoadDataTable*>& RowArray);
 
 private:
 	void InitUILoadData();
@@ -34,6 +34,6 @@ private:
 	class UDataTable* UILoadDataTable;
 
 	// 테스트하기 위한 로드 데이터 만들기
-	TArray<FGZUILoadData*> UILoadDataArray;
+	TArray<FGZUILoadDataTable*> UILoadDataArray;
 
 };

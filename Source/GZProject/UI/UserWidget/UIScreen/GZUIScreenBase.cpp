@@ -64,7 +64,7 @@ void UGZUIScreenBase::ChangeUIState(EGZUIState NewUIState)
 	GZ_LOG(GZ, Warning, TEXT("UIScreenBase::ChangeUIState() NewLoadData.StateName= %s"), &(NewLoadData.StateName));
 	 
 	// 이전 로드된 UIComponent를 삭제 대상에 일단 모두 다 넣음
-	FGZUILoadData LoadDataToRemove = CurLoadData;
+	FGZUILoadDataTable LoadDataToRemove = CurLoadData;
 
 	// 리셋 플래그 확인
 	if (bResetUI)
@@ -112,7 +112,7 @@ void UGZUIScreenBase::ChangeUIState(EGZUIState NewUIState)
 	}
 }
 
-TArray<UGZUIComponent*> UGZUIScreenBase::GetUIComponentsToRemove(FGZUILoadData& LoadDataToRemove)
+TArray<UGZUIComponent*> UGZUIScreenBase::GetUIComponentsToRemove(FGZUILoadDataTable& LoadDataToRemove)
 {
 	TArray<UGZUIComponent*> UIComponentArray;
 
@@ -129,12 +129,12 @@ TArray<UGZUIComponent*> UGZUIScreenBase::GetUIComponentsToRemove(FGZUILoadData& 
 	return UIComponentArray;
 }
 
-void UGZUIScreenBase::AttachNewState(FGZUILoadData InLoadData)
+void UGZUIScreenBase::AttachNewState(FGZUILoadDataTable InLoadData)
 {
 	GZ_LOG(GZ, Warning, TEXT("UIScreenBase::AttachNewState = %d"), InLoadData.StateEnum);
 
 	// State 변경
-	FGZUILoadData OldLoadData = CurLoadData;
+	FGZUILoadDataTable OldLoadData = CurLoadData;
 	CurLoadData = InLoadData;
 
 	// 위젯 생성은 여기서부터

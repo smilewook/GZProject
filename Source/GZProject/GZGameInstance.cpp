@@ -19,25 +19,25 @@ UGZGameInstance::UGZGameInstance()
 UGZGameInstance::~UGZGameInstance()
 {}
 
-void UGZGameInstance::GetUILoadData(TArray<FName>&KeyArray, TArray<FGZUILoadData*>&RowArray)
+void UGZGameInstance::GetUILoadData(TArray<FName>&KeyArray, TArray<FGZUILoadDataTable*>&RowArray)
 {
 	// KeyArray > EGZUIState
 	KeyArray = UILoadDataTable->GetRowNames();
-	UILoadDataTable->GetAllRows<FGZUILoadData>(FString(""), RowArray);
+	UILoadDataTable->GetAllRows<FGZUILoadDataTable>(FString(""), RowArray);
 }
 
-// FGZUILoadData UGZGameInstance::GetUILoadData(EGZUIState UIState)
+// FGZUILoadDataTable UGZGameInstance::GetUILoadData(EGZUIState UIState)
 // {
 // 	TArray<FName> RowNames = UILoadDataTable->GetRowNames();
 // 	for (int i = 0; i < RowNames.Num(); i++)
 // 	{
 // 		FString ContextString = TEXT("");
-// 		FGZUILoadData UILoadData = *(UILoadDataTable->FindRow<FGZUILoadData>(RowNames[i], ContextString));
+// 		FGZUILoadDataTable UILoadData = *(UILoadDataTable->FindRow<FGZUILoadDataTable>(RowNames[i], ContextString));
 // 		UILoadDataArray.Push(UILoadData);
 // 		//GZ_LOG(GZ, Warning, TEXT("UGZGameInstance::InitUILoadData!! UILoadData.StateName = %s"), *(UILoadData.StateName));
 // 	}
 // 
-// 	return UILoadDataTable->FindRow<FGZUILoadData>(*FString::FromInt(UIState), TEXT(""));
+// 	return UILoadDataTable->FindRow<FGZUILoadDataTable>(*FString::FromInt(UIState), TEXT(""));
 // }
 
 void UGZGameInstance::InitUILoadData()
