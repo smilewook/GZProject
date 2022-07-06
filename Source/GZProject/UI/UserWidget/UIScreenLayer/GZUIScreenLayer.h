@@ -34,30 +34,30 @@ public:
 
 public:
 	/** 배경 컨텐츠에 사용하는 레이어 위젯 */
-	UPROPERTY(BlueprintReadOnly, Category = "GZ", Meta = (BindWidgetOptional))
+	UPROPERTY(BlueprintReadOnly, Category = "UI", Meta = (BindWidgetOptional))
 	class UGZUIScreenLayerWidget* BackgroundLayerWidget;
 
 	/** 컨텐츠 레이어 위젯 */
-	UPROPERTY(BlueprintReadOnly, Category = "GZ", Meta = (BindWidgetOptional))
+	UPROPERTY(BlueprintReadOnly, Category = "UI", Meta = (BindWidgetOptional))
 	class UGZUIScreenLayerWidget* ContentsLayerWidget;
 
 	/** 모달(클릭을 막기 위한 처리) 레이어 위젯 */
-	UPROPERTY(BlueprintReadOnly, Category = "GZ", Meta = (BindWidgetOptional))
+	UPROPERTY(BlueprintReadOnly, Category = "UI", Meta = (BindWidgetOptional))
 	class UGZUIScreenLayerWidget* ModalLayerWidget;
 
 	/** 팝업을 위한 레이어 위젯 */
-	UPROPERTY(BlueprintReadOnly, Category = "GZ", Meta = (BindWidgetOptional))
+	UPROPERTY(BlueprintReadOnly, Category = "UI", Meta = (BindWidgetOptional))
 	class UGZUIScreenLayerWidget* PopupLayerWidget;
 
-	UPROPERTY(BlueprintReadOnly, Category = "GZ", Meta = (BindWidgetOptional))
+	UPROPERTY(BlueprintReadOnly, Category = "UI", Meta = (BindWidgetOptional))
 	class UCanvasPanel* BackgroundLayerCanvas;
 
-	UPROPERTY(BlueprintReadOnly, Category = "GZ", Meta = (BindWidgetOptional))
+	UPROPERTY(BlueprintReadOnly, Category = "UI", Meta = (BindWidgetOptional))
 	class UCanvasPanel* ContentsLayerCanvas;
 
-	UPROPERTY(BlueprintReadOnly, Category = "GZ", Meta = (BindWidgetOptional))
+	UPROPERTY(BlueprintReadOnly, Category = "UI", Meta = (BindWidgetOptional))
 	class UCanvasPanel* ModalLayerCanvas;
 
-	UPROPERTY(BlueprintReadOnly, Category = "GZ", Meta = (BindWidgetOptional))
+	UPROPERTY(BlueprintReadOnly, Category = "UI", Meta = (BindWidgetOptional))
 	class UCanvasPanel* PopupLayerCanvas;
 };

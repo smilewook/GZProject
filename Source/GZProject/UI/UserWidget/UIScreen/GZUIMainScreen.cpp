@@ -2,6 +2,7 @@
 
 
 #include "GZUIMainScreen.h"
+#include "Components/Button.h"
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
 #include "UI/UserWidget/UIComponent/GZUIComponent.h"
@@ -11,6 +12,15 @@ UGZUIMainScreen::UGZUIMainScreen(const FObjectInitializer& ObjectInitializer)
 	:UGZUIScreenBase(ObjectInitializer)
 {
 	
+}
+
+void UGZUIMainScreen::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+	// 테스트 용 버튼
+	CurUIState = EGZUIState::None;
+	StateChangeButton->OnClicked.AddDynamic(this, &UGZUIMainScreen::OnClickedStateChange);
 }
 
 void UGZUIMainScreen::OnLevelRemovedFromWorld(ULevel* InLevel, UWorld* InWorld)
@@ -46,4 +56,22 @@ void UGZUIMainScreen::SetUIMode(EGZUIMode NewUIMode)
 			//CanvasPanelSlot->SetOffsets(Offsets);
 		}
 	}
+}
+
+void UGZUIMainScreen::OnClickedStateChange()
+{
+	if (CurUIState == EGZUIState::None)
+	{
+		CurUIState = EGZUIState::Loading;
+	}
+	else if(CurUIState == EGZUIState::Loading)
+	{
+		CurUIState = EGZUIState::Intro;
+	}
+	else if (CurUIState == EGZUIState::Intro)
+	{
+		CurUIState = EGZUIState::Loading;
+	}
+
+	ChangeUIState(CurUIState);
 }

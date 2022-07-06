@@ -4,7 +4,7 @@
 
 
 /**
- * UI에 사용할 Define 값들 정리.
+ * UI에 공통으로 사용할 Define 값들 정리.
  */
 
 
@@ -14,8 +14,12 @@
 UENUM()
 enum class EGZUIScreen : uint8
 {
-	Main,
-	All
+	None,
+
+	Main,		// 전면(필드) 스크린
+	Touch,		// 터치 스크린
+
+	Max
 };
 
  /**

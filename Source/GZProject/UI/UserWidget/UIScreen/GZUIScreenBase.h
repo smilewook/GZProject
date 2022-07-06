@@ -5,11 +5,14 @@
 #include "GZProject.h"
 #include "Blueprint/UserWidget.h"
 #include "UI/Data/GZUILoadDataTable.h"
-#include "UI/Define/GZDefine.h"
+#include "UI/Define/GZUIDefine.h"
 #include "GZUIScreenBase.generated.h"
 
+/** UIScreen에서 UIState 변경될 때 Brodcast() */
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnScreenUIStateChanged, class UGZUIScreenBase*, EGZUIState);
+
 /**
- * 
+ * UI가 보여질 스크린 화면에 할당하는 베이스 클래스.(Main/Touch..)
  */
 UCLASS()
 class GZPROJECT_API UGZUIScreenBase : public UUserWidget
@@ -31,8 +34,20 @@ public:
 	void Reset();
 
 	/**
-	* UIManager Init
-	* @param NewUIMode 새로운 UIMode를 설정
+	* UIScreen 설정
+	* @param NewUIMode 새로운 UIMode
+	*/
+	virtual void SetUIScreen(EGZUIScreen UIScreenType);
+
+	/**
+	* UIScreen Type를 리턴함
+	* @return EGZUIScreen 현재 UIScreen
+	*/
+	virtual EGZUIScreen GetUIScreen();
+
+	/**
+	* UIMode 설정
+	* @param NewUIMode 새로운 UIMode
 	*/
 	virtual void SetUIMode(EGZUIMode NewUIMode);
 
@@ -77,12 +92,25 @@ protected:
 	UFUNCTION()
 	void AddUIComponentToLayer(class UGZUIComponent* NewUIComponent, EGZUIScreenLayerType InLayerType);
 
+	/**
+	 * UIComponent가 삭제될 준비가 됐을 때 이벤트를 전달받음
+	 * @param UIComponent 삭제 준비가 된 UIComponent
+	 */
+	UFUNCTION()
+	void OnReadyToDestroyChild(class UUserWidget* UserWidget);
+
 public:
+	/** UIScreen에서 UIState 변경될 때 Brodcast() */
+	FOnScreenUIStateChanged OnScreenUIStateChanged;
+
 	/** 타겟이 될 UIScreenLayer */
 	UPROPERTY(BlueprintReadOnly, Category = "GZ", meta = (BindWidgetOptional))
 	class UGZUIScreenLayer* UIScreenLayer;
 
 protected:
+	/** 현재 UIScreen */
+	EGZUIScreen CurUIScreen = EGZUIScreen::None;
+
 	/** 현재 UIMode */
 	EGZUIMode CurUIMode;
 

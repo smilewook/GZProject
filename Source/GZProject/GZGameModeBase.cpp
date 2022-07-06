@@ -30,10 +30,4 @@ void AGZGameModeBase::BeginPlay()
 void AGZGameModeBase::InitializeUI()
 {
 	// 레벨 세팅에 기본으로 적용해놔서 일단 사용하자.
-
-	EGZUIMode UIMode;
-	UIMode = EGZUIMode::Lobby;
-	//UIMode = EGZUIMode::Ingame;
-
-	UGZUIManager::GetUIManager().Initialize(UIMode);
 }

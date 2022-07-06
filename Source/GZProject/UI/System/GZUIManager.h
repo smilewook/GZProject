@@ -6,7 +6,7 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "UI/Data/GZUIInfoData.h"
 #include "UI/Data/GZUILoadDataTable.h"
-#include "UI/Define/GZDefine.h"
+#include "UI/Define/GZUIDefine.h"
 #include "GZUIManager.generated.h"
 
 /**
@@ -31,16 +31,25 @@ public:
 	//~ End USubsystem Interface
 
 	/**
-	 * Main Screen을 초기화
-	 * @param MainScreenUIMode 메인스크린에 표시할 UIMode
+	 * UIScreen을 생성초기화
+	 * @param UIScreen 어떤 UI스크린에 표시할지 설정
+	 * @param UIMode UI모드 설정
 	 */
-	void Initialize(EGZUIMode EUIMode);
+	void CreateUIScreen(EGZUIScreen TargetUIScreen, EGZUIMode UIMode);
+
+	/**
+	 * UIScreen Widget을 Get
+	 * @param UIScreenType
+	 * @return UGZUIScreenBase*
+	 */
+	class UGZUIScreenBase* GetUIScreen(EGZUIScreen UIScreenType) const;
 
 	/**
 	* Main Screen의 UIState를 변경함
-	* @param MainUIState 변경하고자 하는 메인스크린 UIState
+	* @param TargetUIScreen 변경하고자 하는 스크린
+	* @param NewUIState 변경될 UIState
 	*/
-	void ChangeUIState(EGZUIState MainUIState);
+	void ChangeUIState(EGZUIScreen TargetUIScreen, EGZUIState NewUIState);
 
 	/**
 	* UI STATE를 리턴함
@@ -89,19 +98,19 @@ public:
 	*/
 	class UGZUIScreenBase* GetUIScreenWidget(EGZUIScreen UIScreen);
 
-	/**
-	 * UIInfo 데이터를 리턴함
-	 * @param TargetClass WidgetBlueprint의 Class
-	 * @return FGZUIInfoData InfoData
-	 */
-	FGZUIInfoData GetUIInfoData(UClass* TargetClass);
-
 	// UI 데이터 받아서 목록 생성
 	//
 
 protected:
 	UPROPERTY()
 	TSubclassOf<class UGZUIMainScreen> MainScreenClass;
+
+	UPROPERTY()
+	TSubclassOf<class UGZUITouchScreen> TouchScreenClass;
+
+	UPROPERTY(Transient)
+	TArray<TObjectPtr<class UGZUIScreenBase>> UIScreens;
+
 private:
 	/** GameInstance */
 	static class UGZGameInstance* GameInstance;
@@ -110,9 +119,10 @@ private:
  	UPROPERTY(Transient)
  	class UGZUIMainScreen* MainScreen;
 
+	/** 터치 스크린 */
+	UPROPERTY(Transient)
+	class UGZUITouchScreen* TouchScreen;	
+
 	/** UIState, UIMode 의 정의 */
 	TArray<FGZUILoadDataTable*> UILoadDataArray;
-
-	/** UIComponent 위치 데이터 */
-	TArray<FGZUIInfoData*> UIInfoDataArray;
 };

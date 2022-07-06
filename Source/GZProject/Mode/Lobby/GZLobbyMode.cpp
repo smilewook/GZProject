@@ -39,8 +39,7 @@ void AGZLobbyMode::BeginPlay()
 
 void AGZLobbyMode::InitializeUI()
 {
-	EGZUIMode UIMode;
-	UIMode = EGZUIMode::Lobby;
-
-	UGZUIManager::GetUIManager().Initialize(UIMode);
+	// UI »ý¼º
+	UGZUIManager::GetUIManager().CreateUIScreen(EGZUIScreen::Touch, EGZUIMode::Lobby);
+	UGZUIManager::GetUIManager().CreateUIScreen(EGZUIScreen::Main, EGZUIMode::Lobby);
 }

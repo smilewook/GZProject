@@ -33,8 +33,5 @@ void AGZGameMode::BeginPlay()
 
 void AGZGameMode::InitializeUI()
 {
-	EGZUIMode UIMode;
-	UIMode = EGZUIMode::Ingame;
-
-	UGZUIManager::GetUIManager().Initialize(UIMode);
+	//
 }

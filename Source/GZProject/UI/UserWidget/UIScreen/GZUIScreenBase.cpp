@@ -17,7 +17,8 @@ UGZUIScreenBase::UGZUIScreenBase(const FObjectInitializer& ObjectInitializer)
 
 void UGZUIScreenBase::NativeConstruct()
 {
-
+	// 팝업컴포넌트 생성하기.
+	// UIScreen 타입 설정하기.
 }
 
 void UGZUIScreenBase::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -39,6 +40,16 @@ void UGZUIScreenBase::Reset()
 
 	UIComponentsOnScreen.Reset();
 	UIComponentsToRemove.Reset();
+}
+
+void UGZUIScreenBase::SetUIScreen(EGZUIScreen UIScreenType)
+{
+	CurUIScreen = UIScreenType;
+}
+
+EGZUIScreen UGZUIScreenBase::GetUIScreen()
+{
+	return CurUIScreen;
 }
 
 void UGZUIScreenBase::SetUIMode(EGZUIMode NewUIMode)
@@ -107,6 +118,7 @@ void UGZUIScreenBase::ChangeUIState(EGZUIState NewUIState)
 		int32 RemoveCount = TempRemoveArray.Num();
 		for (int32 i = 0; i < RemoveCount; ++i)
 		{
+			OnReadyToDestroyChild(TempRemoveArray[0]);
 			TempRemoveArray.RemoveAt(0);
 		}
 	}
@@ -156,11 +168,9 @@ void UGZUIScreenBase::AttachNewState(FGZUILoadDataTable InLoadData)
 		{
 			// 새로 생성할 UIComponent인 경우
 
-			// UIInfoData를 가져와 Add Target Layer와 Canvas를 확인
-			FGZUIInfoData UIInfoData = UGZUIManager::GetUIManager().GetUIInfoData(UIComponentClass);
-
 			// UIComponent 생성
 			UGZUIComponent* NewUIComponent = CreateWidget<UGZUIComponent>(this, UIComponentClass);
+			FGZUIInfoData UIInfoData = NewUIComponent->UIInfoData;
 			GZ_LOG(GZ, Warning, TEXT("UIScreenBase::AttachNewState() CreateWidget = %s"), *UIComponentClass->GetName());
 
 			// UIComponent를 UIInfoData를 기반으로 Layer에 붙임
@@ -196,6 +206,9 @@ void UGZUIScreenBase::AttachNewState(FGZUILoadDataTable InLoadData)
 	// AttachNewState의 콜스택이 Paint 콜스택인 경우가 있음(애니메이션 Tick 등의 Delegate 연결로 인한)
 	// Paint 진행 중에 새로운 위젯이 붙으면 Prepass 데이터가 없어 랜더링 문제가 발생하는 경우가 있음(RetainerBox 크기 오류 문제, 엔진 버그...)
 	//ForceLayoutPrepass();
+
+	// 위젯 생성 후에 상태 변경 알림.
+	OnScreenUIStateChanged.Broadcast(this, CurLoadData.StateEnum);
 }
 
 void UGZUIScreenBase::AddUIComponentToLayer(UGZUIComponent* NewUIComponent, EGZUIScreenLayerType InLayerType)
@@ -213,7 +226,34 @@ void UGZUIScreenBase::AddUIComponentToLayer(UGZUIComponent* NewUIComponent, EGZU
 		return;
 	}
 
-	GZ_LOG(GZ, Warning, TEXT("UIScreenBase::AddUIComponentToLayer() AddChild = %s"), *NewUIComponent->GetName());
+	GZ_LOG(GZ, Warning, TEXT("UIScreenBase::AddUIComponentToLayer() AddUI = %s"), *NewUIComponent->GetName());
 
 	TargetCanvasPanel->AddChild(NewUIComponent);
+}
+
+void UGZUIScreenBase::OnReadyToDestroyChild(UUserWidget* UserWidget)
+{
+	UGZUIComponent* UIComponent = Cast<UGZUIComponent>(UserWidget);
+	
+	// 삭제 전 애니메이션 딜리게이트 제거하기.
+
+	// 삭제하기.
+	{
+		GZ_LOG(GZ, Warning, TEXT("UIScreenBase::OnReadyToDestroyChild() RemoveUI = %s"), *UIComponent->GetName());
+
+		// 리스트에서 삭제하고 부모로부터 떼어냄
+		UIComponentsOnScreen.Remove(UIComponent);
+		UIComponent->RemoveFromParent();
+
+		// 이 시점에 UIComponent는 부모로부터 분리됐을 뿐 메모리 상에는 그대로 존재함으로 주의 필요
+		// 최종적으로 GC가 일어나는 시점이 되야 UIComponent가 메모리에서 삭제됨
+	}
+
+	UIComponentsToRemove.Remove(UIComponent);
+
+	// 이전 UIState의 UIComponent들이 모두 삭제됐다면 다음 UIState를 붙임
+	if (UIComponentsToRemove.Num() <= 0)
+	{
+		AttachNewState(NewLoadData);
+	}
 }

@@ -5,6 +5,7 @@
 #include "GZGameInstance.h"
 #include "UI/UserWidget/UIComponent/GZUIComponent.h"
 #include "UI/UserWidget/UIScreen/GZUIMainScreen.h"
+#include "UI/UserWidget/UIScreen/GZUITouchScreen.h"
 
 
 UGZGameInstance* UGZUIManager::GameInstance;
@@ -19,6 +20,13 @@ UGZUIManager::UGZUIManager()
 	{
 		MainScreenClass = MAIN_SCREEN_WIDGET.Class;
 	}
+
+	// 터치 스크린 클래스 블루프린트 위젯
+	static ConstructorHelpers::FClassFinder<UGZUITouchScreen> TOUCH_SCREEN_WIDGET(TEXT("/Game/UI/WidgetBlueprint/UIScreen/WB_TouchScreen.WB_TouchScreen_C"));
+	if (TOUCH_SCREEN_WIDGET.Succeeded())
+	{
+		TouchScreenClass = TOUCH_SCREEN_WIDGET.Class;
+	}
 }
 
 void UGZUIManager::Initialize(FSubsystemCollectionBase& Collection)
@@ -30,6 +38,7 @@ void UGZUIManager::Initialize(FSubsystemCollectionBase& Collection)
 	TArray<FName> NameArray;
 	// UIMode 및 UIState 데이터 테이블
 	GameInstance->GetUILoadData(NameArray, UILoadDataArray);
+	GZ_LOG(GZ, Warning, TEXT("UGZUIManager::Initialize / UILoadDataArrayLength = %d"), UILoadDataArray.Num());
 
 	// UI 배치 메타데이터
 
@@ -44,34 +53,80 @@ void UGZUIManager::Deinitialize()
 		MainScreen = nullptr;
 	}
 
+	if (IsValid(TouchScreen))
+	{
+		TouchScreen->RemoveFromParent();
+		TouchScreen = nullptr;
+	}
+
 	GameInstance = nullptr;
 }
 
-void UGZUIManager::Initialize(EGZUIMode UIMode)
+void UGZUIManager::CreateUIScreen(EGZUIScreen TargetUIScreen, EGZUIMode UIMode)
 {
-	GZ_LOG(GZ, Warning, TEXT("UGZUIManager::Initialize!! With UIMode = %d"), UIMode);
+	GZ_LOG(GZ, Warning, TEXT("UGZUIManager::CreateUIScreen!! w/ TargetUIScreen = %d, UIMode = %d"), TargetUIScreen, UIMode);
 
-	// 메인스크린 생성
-	if (!IsValid(MainScreen))
+	switch (TargetUIScreen)
 	{
-		MainScreen = CreateWidget<UGZUIMainScreen>(GameInstance, MainScreenClass);
-		//MainScreen->OnScreenUIStateChanged.AddUObject(this, &ThisClass::OnScreenUIStateChanged);
-	
-		MainScreen->AddToViewport();
+	case EGZUIScreen::Main:
+	{
+		// 메인 스크린 생성
+		if (!IsValid(MainScreen))
+		{
+			MainScreen = CreateWidget<UGZUIMainScreen>(GameInstance, MainScreenClass);
+			//MainScreen->OnScreenUIStateChanged.AddUObject(this, &ThisClass::OnScreenUIStateChanged);
+			MainScreen->AddToViewport();
+
+			MainScreen->SetUIScreen(TargetUIScreen);
+			UIScreens.Add(MainScreen);
+		}
+		MainScreen->SetUIMode(UIMode);
 	}
-	
-	MainScreen->SetUIMode(UIMode);
+	break;
+
+	case EGZUIScreen::Touch:
+	{
+		// 터치 스크린 생성
+		if (!IsValid(TouchScreen))
+		{
+			TouchScreen = CreateWidget<UGZUITouchScreen>(GameInstance, TouchScreenClass);
+			//TouchScreen->OnScreenUIStateChanged.AddUObject(this, &ThisClass::OnScreenUIStateChanged);
+			TouchScreen->CreateSlateWindow();	// 터치 스크린은 추가 윈도우 생성
+
+			TouchScreen->SetUIScreen(TargetUIScreen);
+			UIScreens.Add(TouchScreen);
+		}
+		TouchScreen->SetUIMode(UIMode);
+	}
+	break;
+	}
 }
 
-void UGZUIManager::ChangeUIState(EGZUIState MainUIState)
+UGZUIScreenBase* UGZUIManager::GetUIScreen(EGZUIScreen UIScreenType) const
 {
-	GZ_LOG(GZ, Warning, TEXT("UIManager::ChangeUIState  = %d / Solo"), MainUIState);
+	int32 Index = UIScreens.IndexOfByPredicate([UIScreenType](UGZUIScreenBase* UIScreen) {
+		return UIScreen->GetUIScreen() == UIScreenType;
+		});
 
-	if (IsValid(MainScreen))
+	if (Index == INDEX_NONE)
 	{
-		//MainScreen->SetUIStateParam(FM1UIStateParam());
-		MainScreen->ChangeUIState(MainUIState);
+		return nullptr;
 	}
+
+	return UIScreens[Index];
+}
+
+void UGZUIManager::ChangeUIState(EGZUIScreen TargetUIScreen, EGZUIState NewUIState)
+{
+	GZ_LOG(GZ, Warning, TEXT("UIManager::ChangeUIState!! w/ TargetUIScreen = %d, NewUIState = %d"), TargetUIScreen, NewUIState);
+
+	UGZUIScreenBase* UIScreen = GetUIScreen(TargetUIScreen);
+	if (!IsValid(UIScreen))
+	{
+		return;
+	}
+
+	UIScreen->ChangeUIState(NewUIState);
 }
 
 EGZUIState UGZUIManager::GetUIState(EGZUIScreen TargetScreen) const
@@ -209,28 +264,6 @@ UGZUIScreenBase* UGZUIManager::GetUIScreenWidget(EGZUIScreen UIScreen)
 	}
 
 	return MainScreen;
-}
-
-FGZUIInfoData UGZUIManager::GetUIInfoData(UClass* TargetClass)
-{
-	FGZUIInfoData NoneData;
-
-	if (UIInfoDataArray.Num() <= 0)
-	{
-		return NoneData;
-	}
-
-	int32 RowIndex = UIInfoDataArray.IndexOfByPredicate([&](const FGZUIInfoData* InfoData) {
-		return (InfoData->WidgetBlueprintClass == TargetClass);
-		});
-
-	if (RowIndex == INDEX_NONE)
-	{
-		GZ_LOG(GZ, Warning, TEXT("UIManager::GetUIInfoData() is Empty, UIName = %s"), *TargetClass->GetName());
-		return NoneData;
-	}
-
-	return *UIInfoDataArray[RowIndex];
 }
 
 UGZUIManager& UGZUIManager::GetUIManager()
