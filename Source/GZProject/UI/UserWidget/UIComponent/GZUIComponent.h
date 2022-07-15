@@ -3,15 +3,13 @@
 #pragma once
 
 #include "GZProject.h"
-
 #include "Components/CanvasPanelSlot.h"
 #include "UI/Define/GZUIDefine.h"
 #include "UI/Event/GZUIEvent.h"
 #include "UI/Event/GZUIEventListener.h"
-#include "UI/System/GZUIManager.h"
-#include "UI/UserWidget/UIScreenLayer/GZUIScreenLayer.h"
 #include "UI/UMG/Blueprint/GZEventAnimUserWidget.h"
 #include "UI/UMG/Blueprint/GZWidgetEventAnimDefine.h"
+#include "UI/UserWidget/UIScreenLayer/GZUIScreenLayer.h"
 #include "GZUIComponent.generated.h"
 
 USTRUCT(BlueprintType)

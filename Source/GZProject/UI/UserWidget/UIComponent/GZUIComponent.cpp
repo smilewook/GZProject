@@ -2,6 +2,7 @@
 
 
 #include "GZUIComponent.h"
+#include "UI/System/GZUIManager.h"
 
 UGZUIComponent::UGZUIComponent(const FObjectInitializer& ObjectInitializer)
 	:UGZEventAnimUserWidget(ObjectInitializer)

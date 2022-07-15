@@ -2,6 +2,7 @@
 
 
 #include "GZUIIntro.h"
+#include "UI/System/GZUIManager.h"
 
 void UGZUIIntro::NativeConstruct()
 {

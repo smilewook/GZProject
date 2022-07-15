@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "UI/UserWidget/UIScreenLayer/GZUIScreenLayer.h"
+#include "GZUIScreenLayer.h"
 #include "UI/UserWidget/UIScreenLayer/GZUIScreenLayerWidget.h"
 
 UCanvasPanel* UGZUIScreenLayer::GetLayerCanvasPanel(EGZUIScreenLayerType InLayerType)

@@ -4,9 +4,11 @@
 
 #include "GZProject.h"
 #include "Blueprint/UserWidget.h"
-#include "UI/Event/GZUIEventListener.h"
 #include "UI/Data/GZUILoadDataTable.h"
 #include "UI/Define/GZUIDefine.h"
+#include "UI/Event/GZUIEventListener.h"
+#include "UI/UserWidget/UIComponent/GZUIComponent.h"
+#include "UI/UserWidget/UIScreenLayer/GZUIScreenLayer.h"
 #include "GZUIScreenBase.generated.h"
 
 /** UIScreen에서 UIState 변경될 때 Broadcast() */

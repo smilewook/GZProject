@@ -3,11 +3,7 @@
 
 #include "GZUIScreenBase.h"
 #include "Components/CanvasPanel.h"
-#include "Ui/Data/GZUIInfoData.h"
 #include "UI/System/GZUIManager.h"
-#include "UI/UserWidget/UIComponent/GZUIComponent.h"
-#include "UI/UserWidget/UIScreenLayer/GZUIScreenLayer.h"
-
 
 UGZUIScreenBase::UGZUIScreenBase(const FObjectInitializer& ObjectInitializer)
 	:UUserWidget(ObjectInitializer)

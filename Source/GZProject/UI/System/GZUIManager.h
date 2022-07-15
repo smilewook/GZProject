@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
-#include "UI/Data/GZUIInfoData.h"
+#include "GZGameInstance.h"
 #include "UI/Data/GZUILoadDataTable.h"
 #include "UI/Define/GZUIDefine.h"
 #include "UI/Event/GZUIEventListener.h"
+#include "UI/UserWidget/UIComponent/GZUIComponent.h"
 #include "GZUIManager.generated.h"
 
 /** UIState º¯°æ ½Ã Delegate */

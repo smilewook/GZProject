@@ -2,8 +2,6 @@
 
 
 #include "GZUIManager.h"
-#include "GZGameInstance.h"
-#include "UI/UserWidget/UIComponent/GZUIComponent.h"
 #include "UI/UserWidget/UIScreen/GZUIMainScreen.h"
 #include "UI/UserWidget/UIScreen/GZUITouchScreen.h"
 
