@@ -19,6 +19,15 @@ public:
 	virtual void NativeConstruct() override;
 	//~ End UUserWidget Interface
 
+	//~ Begin UGZUIComponent Interface
+	virtual void RegisterDelegates() override;
+	virtual void UnregisterDelegates() override;
+	//~ End UGZUIComponent Interface
+
+protected:
+	UFUNCTION()
+	void OnChangeMainUIState(EGZUIState NewUIState);
+
 public:
 	UPROPERTY(BlueprintReadOnly, Category = "GZ", Meta = (BindWidgetOptional))
 	class UTextBlock* IntroText;

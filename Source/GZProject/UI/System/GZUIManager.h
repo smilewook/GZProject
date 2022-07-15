@@ -7,7 +7,11 @@
 #include "UI/Data/GZUIInfoData.h"
 #include "UI/Data/GZUILoadDataTable.h"
 #include "UI/Define/GZUIDefine.h"
+#include "UI/Event/GZUIEventListener.h"
 #include "GZUIManager.generated.h"
+
+/** UIState 변경 시 Delegate */
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnUIStateChanged, EGZUIState);
 
 /**
  * 
@@ -38,18 +42,31 @@ public:
 	void CreateUIScreen(EGZUIScreen TargetUIScreen, EGZUIMode UIMode);
 
 	/**
-	 * UIScreen Widget을 Get
-	 * @param UIScreenType
-	 * @return UGZUIScreenBase*
-	 */
-	class UGZUIScreenBase* GetUIScreen(EGZUIScreen UIScreenType) const;
-
-	/**
 	* Main Screen의 UIState를 변경함
 	* @param TargetUIScreen 변경하고자 하는 스크린
 	* @param NewUIState 변경될 UIState
 	*/
 	void ChangeUIState(EGZUIScreen TargetUIScreen, EGZUIState NewUIState);
+
+	/**
+	 * UIEvent Listener를 추가함
+	 * @param TargetUIScreen 타깃 스크린
+	 * @param Listener 리스너
+	 */
+	void AddUIEventListener(EGZUIScreen TargetUIScreen, class IGZUIEventListener* Listener);
+
+	/**
+	 * UIEvent Listener를 제거함
+	 */
+	void RemoveUIEventListener(class IGZUIEventListener* Listener);
+	void RemoveUIEventListener(EGZUIScreen TargetUIScreen, class IGZUIEventListener* Listener);
+
+	/**
+	 * UIScreen Widget을 Get
+	 * @param UIScreenType
+	 * @return UGZUIScreenBase*
+	 */
+	class UGZUIScreenBase* GetUIScreen(EGZUIScreen UIScreenType) const;
 
 	/**
 	* UI STATE를 리턴함
@@ -98,8 +115,34 @@ public:
 	*/
 	class UGZUIScreenBase* GetUIScreenWidget(EGZUIScreen UIScreen);
 
-	// UI 데이터 받아서 목록 생성
-	//
+	/**
+	* UIState 변경될때 UIScreen 타입별 등록된 UI에서 받을 함수 델리게이트에 등록 
+	* @param TargetUIScreen UIScreen(Main, Touch..)
+	* @param InObj 컨텐츠별로 만든 UIComponent
+	* @param InResponseMethod UIComponent에서 콜백받을 함수
+	*/
+	template< class UserClass >
+	void SetOnUIStateChanged(EGZUIScreen TargetUIScreen, UserClass* InObj, typename FOnUIStateChanged::FDelegate::TUObjectMethodDelegate< UserClass >::FMethodPtr InResponseMethod)
+	{
+		FOnUIStateChanged& OnUIStateChanged = UIStateChangeDelegates.FindOrAdd(TargetUIScreen);
+
+		OnUIStateChanged.Add(FOnUIStateChanged::FDelegate::CreateUObject(InObj, InResponseMethod));
+	}
+
+	/**
+	* Widget별 등록된 델리게이트 제거
+	* @param InObj 위젯
+	*/
+	void ClearOnUIStateChanged(TObjectPtr<UObject> InObj);
+	
+protected:
+	/**
+	* 메인, 서브스크린의 UIState 이벤트를 받기 위한 함수
+	* @param UIScreen 스크린 객체 포인터
+	* @param NewState 변경 후 UIState 값
+	*/
+	UFUNCTION()
+	void OnScreenUIStateChanged(UGZUIScreenBase* UIScreen, EGZUIState NewState);
 
 protected:
 	UPROPERTY()
@@ -108,6 +151,7 @@ protected:
 	UPROPERTY()
 	TSubclassOf<class UGZUITouchScreen> TouchScreenClass;
 
+	/** 생성된 스크린 배열 */
 	UPROPERTY(Transient)
 	TArray<TObjectPtr<class UGZUIScreenBase>> UIScreens;
 
@@ -125,4 +169,7 @@ private:
 
 	/** UIState, UIMode 의 정의 */
 	TArray<FGZUILoadDataTable*> UILoadDataArray;
+
+	/** UIScreen 타입별, 위젯별 딜리게이트 관리 */
+	TMap<EGZUIScreen, FOnUIStateChanged> UIStateChangeDelegates;
 };

@@ -97,7 +97,7 @@ void UGZUIScreenBase::ChangeUIState(EGZUIState NewUIState)
 	// 삭제할 UIComponent가 있는 지 확인
 	if (UIComponentsToRemove.Num() <= 0)
 	{
-		// 삭제할 대상이 없다면 바로 새로운 UIState로 전이
+		// 삭제할 대상이 없다면 바로 새로운 UIState로 변경
 		AttachNewState(NewLoadData);
 	}
 	else
@@ -124,23 +124,6 @@ void UGZUIScreenBase::ChangeUIState(EGZUIState NewUIState)
 	}
 }
 
-TArray<UGZUIComponent*> UGZUIScreenBase::GetUIComponentsToRemove(FGZUILoadDataTable& LoadDataToRemove)
-{
-	TArray<UGZUIComponent*> UIComponentArray;
-
-	// 삭제대상이 된 UIComponent 리스트를 추림
-	for (UGZUIComponent* UIComponent : UIComponentsOnScreen)
-	{
-		int32 Index = LoadDataToRemove.ComponentClassArray.IndexOfByPredicate([UIComponent](TSubclassOf<UGZUIComponent> UIComponentClass) {
-			return (UIComponentClass == UIComponent->GetClass());
-		});
-
-		UIComponentArray.Add(UIComponent);
-	}
-
-	return UIComponentArray;
-}
-
 void UGZUIScreenBase::AttachNewState(FGZUILoadDataTable InLoadData)
 {
 	GZ_LOG(GZ, Warning, TEXT("UIScreenBase::AttachNewState = %d"), InLoadData.StateEnum);
@@ -161,7 +144,7 @@ void UGZUIScreenBase::AttachNewState(FGZUILoadDataTable InLoadData)
 		// 화면 상에 이미 존재하는 UIComponent인 지 확인함
 		int32 Index = UIComponentsOnScreen.IndexOfByPredicate([&](UGZUIComponent* UICompCached) {
 			return UICompCached->GetClass() == UIComponentClass;
-		});
+			});
 
 		// 새롭게 생성할 위젯인 지 확인
 		if (Index == INDEX_NONE)
@@ -170,8 +153,16 @@ void UGZUIScreenBase::AttachNewState(FGZUILoadDataTable InLoadData)
 
 			// UIComponent 생성
 			UGZUIComponent* NewUIComponent = CreateWidget<UGZUIComponent>(this, UIComponentClass);
+			if (IsValid(NewUIComponent))
+			{
+				NewUIComponent->OnUIEvent.AddUObject(this, &ThisClass::OnUIComponentEvent);
+			}
+
 			FGZUIInfoData UIInfoData = NewUIComponent->UIInfoData;
 			GZ_LOG(GZ, Warning, TEXT("UIScreenBase::AttachNewState() CreateWidget = %s"), *UIComponentClass->GetName());
+
+			// UIComponent의 OwnerScreen을 설정
+			NewUIComponent->OwnerScreen = CurUIScreen;
 
 			// UIComponent를 UIInfoData를 기반으로 Layer에 붙임
 			AddUIComponentToLayer(NewUIComponent, UIInfoData.UIScreenLayerType);
@@ -210,6 +201,35 @@ void UGZUIScreenBase::AttachNewState(FGZUILoadDataTable InLoadData)
 	// 위젯 생성 후에 상태 변경 알림.
 	OnScreenUIStateChanged.Broadcast(this, CurLoadData.StateEnum);
 }
+
+void UGZUIScreenBase::AddUIEventListener(class IGZUIEventListener* EventListener)
+{
+	UIEventListeners.Add(EventListener);
+}
+
+void UGZUIScreenBase::RemoveUIEventListener(class IGZUIEventListener* EventListener)
+{
+	UIEventListeners.Remove(EventListener);
+}
+
+TArray<UGZUIComponent*> UGZUIScreenBase::GetUIComponentsToRemove(FGZUILoadDataTable& LoadDataToRemove)
+{
+	TArray<UGZUIComponent*> UIComponentArray;
+
+	// 삭제대상이 된 UIComponent 리스트를 추림
+	for (UGZUIComponent* UIComponent : UIComponentsOnScreen)
+	{
+		int32 Index = LoadDataToRemove.ComponentClassArray.IndexOfByPredicate([UIComponent](TSubclassOf<UGZUIComponent> UIComponentClass) {
+			return (UIComponentClass == UIComponent->GetClass());
+		});
+
+		UIComponentArray.Add(UIComponent);
+	}
+
+	return UIComponentArray;
+}
+
+
 
 void UGZUIScreenBase::AddUIComponentToLayer(UGZUIComponent* NewUIComponent, EGZUIScreenLayerType InLayerType)
 {
@@ -255,5 +275,20 @@ void UGZUIScreenBase::OnReadyToDestroyChild(UUserWidget* UserWidget)
 	if (UIComponentsToRemove.Num() <= 0)
 	{
 		AttachNewState(NewLoadData);
+	}
+}
+
+void UGZUIScreenBase::OnUIComponentEvent(const FGZUIEventParam& EventParam)
+{
+	TArray<class IGZUIEventListener*> Listeners = UIEventListeners;
+
+	for (int32 i = 0; i < Listeners.Num(); ++i)
+	{
+		if (!Listeners.IsValidIndex(i) || Listeners[i] == nullptr)
+		{
+			continue;
+		}
+
+		Listeners[i]->OnUIEvent(CurLoadData.StateEnum, EventParam);
 	}
 }

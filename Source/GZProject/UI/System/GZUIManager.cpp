@@ -74,7 +74,7 @@ void UGZUIManager::CreateUIScreen(EGZUIScreen TargetUIScreen, EGZUIMode UIMode)
 		if (!IsValid(MainScreen))
 		{
 			MainScreen = CreateWidget<UGZUIMainScreen>(GameInstance, MainScreenClass);
-			//MainScreen->OnScreenUIStateChanged.AddUObject(this, &ThisClass::OnScreenUIStateChanged);
+			MainScreen->OnScreenUIStateChanged.AddUObject(this, &ThisClass::OnScreenUIStateChanged);
 			MainScreen->AddToViewport();
 
 			MainScreen->SetUIScreen(TargetUIScreen);
@@ -90,7 +90,7 @@ void UGZUIManager::CreateUIScreen(EGZUIScreen TargetUIScreen, EGZUIMode UIMode)
 		if (!IsValid(TouchScreen))
 		{
 			TouchScreen = CreateWidget<UGZUITouchScreen>(GameInstance, TouchScreenClass);
-			//TouchScreen->OnScreenUIStateChanged.AddUObject(this, &ThisClass::OnScreenUIStateChanged);
+			TouchScreen->OnScreenUIStateChanged.AddUObject(this, &ThisClass::OnScreenUIStateChanged);
 			TouchScreen->CreateSlateWindow();	// 터치 스크린은 추가 윈도우 생성
 
 			TouchScreen->SetUIScreen(TargetUIScreen);
@@ -100,6 +100,41 @@ void UGZUIManager::CreateUIScreen(EGZUIScreen TargetUIScreen, EGZUIMode UIMode)
 	}
 	break;
 	}
+}
+
+void UGZUIManager::ChangeUIState(EGZUIScreen TargetUIScreen, EGZUIState NewUIState)
+{
+	GZ_LOG(GZ, Warning, TEXT("UIManager::ChangeUIState!! w/ TargetUIScreen = %d, NewUIState = %d"), TargetUIScreen, NewUIState);
+
+	UGZUIScreenBase* UIScreen = GetUIScreen(TargetUIScreen);
+	if (!IsValid(UIScreen))
+	{
+		return;
+	}
+
+	UIScreen->ChangeUIState(NewUIState);
+}
+
+void UGZUIManager::AddUIEventListener(EGZUIScreen TargetUIScreen, IGZUIEventListener* Listener)
+{
+	UGZUIScreenBase* UIScreen = GetUIScreen(TargetUIScreen);
+	if (!IsValid(UIScreen))
+	{
+		return;
+	}
+
+	UIScreen->AddUIEventListener(Listener);
+}
+
+void UGZUIManager::RemoveUIEventListener(EGZUIScreen TargetUIScreen, class IGZUIEventListener* Listener)
+{
+	UGZUIScreenBase* UIScreen = GetUIScreen(TargetUIScreen);
+	if (!IsValid(UIScreen))
+	{
+		return;
+	}
+
+	UIScreen->RemoveUIEventListener(Listener);
 }
 
 UGZUIScreenBase* UGZUIManager::GetUIScreen(EGZUIScreen UIScreenType) const
@@ -114,19 +149,6 @@ UGZUIScreenBase* UGZUIManager::GetUIScreen(EGZUIScreen UIScreenType) const
 	}
 
 	return UIScreens[Index];
-}
-
-void UGZUIManager::ChangeUIState(EGZUIScreen TargetUIScreen, EGZUIState NewUIState)
-{
-	GZ_LOG(GZ, Warning, TEXT("UIManager::ChangeUIState!! w/ TargetUIScreen = %d, NewUIState = %d"), TargetUIScreen, NewUIState);
-
-	UGZUIScreenBase* UIScreen = GetUIScreen(TargetUIScreen);
-	if (!IsValid(UIScreen))
-	{
-		return;
-	}
-
-	UIScreen->ChangeUIState(NewUIState);
 }
 
 EGZUIState UGZUIManager::GetUIState(EGZUIScreen TargetScreen) const
@@ -264,6 +286,25 @@ UGZUIScreenBase* UGZUIManager::GetUIScreenWidget(EGZUIScreen UIScreen)
 	}
 
 	return MainScreen;
+}
+
+void UGZUIManager::ClearOnUIStateChanged(TObjectPtr<UObject> InObj)
+{
+	for (auto& Delegate : UIStateChangeDelegates)
+	{
+		Delegate.Value.RemoveAll(InObj);
+	}
+}
+
+void UGZUIManager::OnScreenUIStateChanged(UGZUIScreenBase* UIScreen, EGZUIState NewState)
+{
+	if (!IsValid(UIScreen))
+	{
+		return;
+	}
+
+	// 스크린 타입별로 등록된 델리게이트 broadcast.
+	UIStateChangeDelegates.FindOrAdd(UIScreen->GetUIScreen()).Broadcast(NewState);
 }
 
 UGZUIManager& UGZUIManager::GetUIManager()

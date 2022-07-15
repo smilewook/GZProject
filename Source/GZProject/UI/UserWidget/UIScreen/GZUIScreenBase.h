@@ -4,11 +4,12 @@
 
 #include "GZProject.h"
 #include "Blueprint/UserWidget.h"
+#include "UI/Event/GZUIEventListener.h"
 #include "UI/Data/GZUILoadDataTable.h"
 #include "UI/Define/GZUIDefine.h"
 #include "GZUIScreenBase.generated.h"
 
-/** UIScreen에서 UIState 변경될 때 Brodcast() */
+/** UIScreen에서 UIState 변경될 때 Broadcast() */
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnScreenUIStateChanged, class UGZUIScreenBase*, EGZUIState);
 
 /**
@@ -27,11 +28,6 @@ public:
 	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 	//~ End UUserWidget Interface
-
-	/**
-	 * 모든 상태와 내부 데이터를 리셋
-	 */
-	void Reset();
 
 	/**
 	* UIScreen 설정
@@ -64,18 +60,31 @@ public:
 	EGZUIState GetUIState() const { return EGZUIState::None; }
 
 	/**
+	 * 이벤트 리스너 설정
+	 * @param EventListener 이벤트 리스너
+	 */
+	void AddUIEventListener(class IGZUIEventListener* EventListener);
+	void RemoveUIEventListener(class IGZUIEventListener* EventListener);
+
+	/**
 	 * 화면 상에 존재하는 UIComponent 배열 정보
 	 */
 	TArray<class UGZUIComponent*>& GetUIComponentsOnScreen() { return UIComponentsOnScreen; }
 
-	/**
-	* UILoadData 전달받아 캐시된 위젯(배치된)을 리턴함
-	* @param StateDataToRemove 찾고자 하는 위젯 목록
-	* @return TArray<UGZUIComponent*> 위젯 포인터를 담은 배열
-	*/
-	TArray<class UGZUIComponent*> GetUIComponentsToRemove(FGZUILoadDataTable& LoadDataToRemove);
-
 protected:
+
+	/**
+	* 모든 상태와 내부 데이터를 리셋
+	*/
+	void Reset();
+
+	/**
+	* UIComponent를 대상 Layer에 추가함
+	* @param NewWidget 새로 추가할 UIComponent
+	* @param InLayerType Layer 타입
+	*/
+	UFUNCTION()
+		void AddUIComponentToLayer(class UGZUIComponent* NewUIComponent, EGZUIScreenLayerType InLayerType);
 	
 	/**
 	* 이전 상태 데이터와 비교하여 삭제할 위젯들은 삭제하고 새로운 위젯들은 추가함
@@ -85,12 +94,11 @@ protected:
 	void AttachNewState(FGZUILoadDataTable InLoadData);
 
 	/**
-	* UIComponent를 대상 Layer에 추가함
-	* @param NewWidget 새로 추가할 UIComponent
-	* @param InLayerType Layer 타입
+	* UILoadData 전달받아 캐시된 위젯(배치된)을 리턴함
+	* @param StateDataToRemove 찾고자 하는 위젯 목록
+	* @return TArray<UGZUIComponent*> 위젯 포인터를 담은 배열
 	*/
-	UFUNCTION()
-	void AddUIComponentToLayer(class UGZUIComponent* NewUIComponent, EGZUIScreenLayerType InLayerType);
+	TArray<class UGZUIComponent*> GetUIComponentsToRemove(FGZUILoadDataTable& LoadDataToRemove);
 
 	/**
 	 * UIComponent가 삭제될 준비가 됐을 때 이벤트를 전달받음
@@ -98,6 +106,12 @@ protected:
 	 */
 	UFUNCTION()
 	void OnReadyToDestroyChild(class UUserWidget* UserWidget);
+
+	/**
+	 * UIEventListeners에 등록된 UIComponent EventListener에 이벤트를 전달
+	 * @param EventParam 전달할 이벤트
+	 */
+	void OnUIComponentEvent(const FGZUIEventParam& EventParam);
 
 public:
 	/** UIScreen에서 UIState 변경될 때 Brodcast() */
@@ -128,5 +142,7 @@ protected:
 
 	/** UIState 변경 시 초기화(UIComponent 모두를 새로 재생성) 작업을 할 지 결정하는 플래그 */
 	bool bResetUI = false;
+
+	TArray<class IGZUIEventListener*> UIEventListeners;
 
 };
